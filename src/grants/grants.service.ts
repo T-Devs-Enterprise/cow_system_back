@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRolesBuilder, RolesBuilder } from 'nest-access-control';
+import { AdminService } from 'src/common/admin/admin.service';
 import { Repository } from 'typeorm';
 import { CreateGrantInput } from './dto/create-grant.input';
 import { UpdateGrantInput } from './dto/update-grant.input';
@@ -9,6 +11,7 @@ import { Grant } from './entities/grant.entity';
 export class GrantsService {
   constructor(
     @InjectRepository(Grant) private grantsRepository: Repository<Grant>,
+    @InjectRolesBuilder() private readonly rolesBuilder: RolesBuilder, // private readonly adminService: AdminService,
   ) {}
   create(createGrantInput: CreateGrantInput) {
     return 'This action adds a new grant';
@@ -19,6 +22,14 @@ export class GrantsService {
 
     return grants;
   }
+  async refreshGrants() {
+    const grants = await this.findAllForAc();
+    console.log(
+      '🚀 ~ file: grants.service.ts:27 ~ GrantsService ~ refreshGrants ~ grants',
+      grants,
+    );
+    this.rolesBuilder.setGrants(grants);
+  }
 
   async findAllForAc() {
     const grants = await this.findAll();
@@ -26,7 +37,6 @@ export class GrantsService {
       ...grant,
       role: grant.role.id,
     }));
-    console.log(modifiedGrants);
     return modifiedGrants;
   }
 

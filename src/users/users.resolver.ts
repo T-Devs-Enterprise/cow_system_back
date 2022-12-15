@@ -7,7 +7,12 @@ import { LoggedUserOutput } from './dto/logged-user.output';
 import { LoginUserInput } from './dto/login-user.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
-import { ACGuard, UseRoles } from 'nest-access-control';
+import {
+  ACGuard,
+  InjectRolesBuilder,
+  RolesBuilder,
+  UseRoles,
+} from 'nest-access-control';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -18,7 +23,7 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
-  @UseGuards(JwtAuthGuard, ACGuard)
+  @UseGuards(JwtAuthGuard)
   @UseRoles({
     resource: 'users',
     action: 'read',

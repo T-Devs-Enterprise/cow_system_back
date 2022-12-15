@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import AdminJS, { RecordActionResponse, ResourceWithOptions } from 'adminjs';
 import { Database } from '@adminjs/typeorm';
 import { AdminModule as NestAdminModule } from '@adminjs/nestjs';
@@ -10,6 +10,16 @@ import { componentLoader, Components } from './components';
 import { CustomResource } from './admin.resource';
 import { after, manyToManyComponent } from './hooks/many-to-many.hook';
 import { userResource } from './custom-resources/user.resource';
+import { GrantsModule } from 'src/grants/grants.module';
+import { GrantsService } from 'src/grants/grants.service';
+import { grantResource } from './custom-resources/grant.resource';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from 'src/users/users.module';
+import { AdminService } from './admin.service';
+import { RolesModule } from 'src/roles/roles.module';
+import { AnimalsModule } from 'src/animals/animals.module';
+import { AuthModule } from '../auth/auth.module';
+import { AppModule } from 'src/app.module';
 
 AdminJS.registerAdapter({ Database, Resource: CustomResource });
 
@@ -17,16 +27,22 @@ AdminJS.registerAdapter({ Database, Resource: CustomResource });
 
 @Module({
   imports: [
+    // forwardRef(() => GrantsModule),
+    // ConfigModule,
     NestAdminModule.createAdminAsync({
-      useFactory: () => ({
+      imports: [GrantsModule],
+      useFactory: (grantsService: GrantsService) => ({
         adminJsOptions: {
           rootPath: '/admin',
-          resources: [userResource, Role, Grant],
+          resources: [userResource, Role, grantResource(grantsService)],
           branding: {},
           componentLoader: componentLoader,
         },
       }),
+      inject: [GrantsService],
     }),
   ],
+  // providers: [AdminService],
+  // exports: [AdminService],
 })
 export class AdminModule {}

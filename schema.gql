@@ -6,7 +6,8 @@ type Grant {
   """Id field (placeholder)"""
   id: String!
   resource: String!
-  action: String!
+  operation: String!
+  possession: String!
   attributes: String!
 }
 
@@ -28,34 +29,33 @@ type LoggedUserOutput {
   accessToken: String!
 }
 
-type Query {
-  grants: [Grant!]!
-  grant(id: Int!): Grant!
-  users: [User!]!
-  roles: [Role!]!
-  role(id: Int!): Role!
-}
-
-type Mutation {
-  createGrant(createGrantInput: CreateGrantInput!): Grant!
-  updateGrant(updateGrantInput: UpdateGrantInput!): Grant!
-  removeGrant(id: Int!): Grant!
-  createUser(createUserInput: CreateUserInput!): User!
-  loginUser(logginUserInput: LoginUserInput!): LoggedUserOutput!
-  createRole(createRoleInput: CreateRoleInput!): Role!
-  updateRole(updateRoleInput: UpdateRoleInput!): Role!
-  removeRole(id: Int!): Role!
-}
-
-input CreateGrantInput {
+type Animal {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdateGrantInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+type Query {
+  users: [User!]!
+  grants: [Grant!]!
+  grant(id: Int!): Grant!
+  roles: [Role!]!
+  role(id: Int!): Role!
+  animals: [Animal!]!
+  animal(id: Int!): Animal!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  loginUser(logginUserInput: LoginUserInput!): LoggedUserOutput!
+  createGrant(createGrantInput: CreateGrantInput!): Grant!
+  updateGrant(updateGrantInput: UpdateGrantInput!): Grant!
+  removeGrant(id: Int!): Grant!
+  createRole(createRoleInput: CreateRoleInput!): Role!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  removeRole(id: Int!): Role!
+  createAnimal(createAnimalInput: CreateAnimalInput!): Animal!
+  updateAnimal(updateAnimalInput: UpdateAnimalInput!): Animal!
+  removeAnimal(id: Int!): Animal!
 }
 
 input CreateUserInput {
@@ -74,6 +74,17 @@ input LoginUserInput {
   password: String!
 }
 
+input CreateGrantInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateGrantInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input CreateRoleInput {
   """Example field (placeholder)"""
   name: String!
@@ -82,5 +93,16 @@ input CreateRoleInput {
 input UpdateRoleInput {
   """Example field (placeholder)"""
   name: String
+  id: Int!
+}
+
+input CreateAnimalInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateAnimalInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
 }

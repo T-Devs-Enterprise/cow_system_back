@@ -1,7 +1,12 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 import { Role } from 'src/roles/entities/role.entity';
 
 import {
+  AfterInsert,
+  AfterLoad,
+  AfterUpdate,
   BaseEntity,
   Column,
   Entity,
@@ -10,6 +15,23 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
+
+export enum Resource {
+  ANIMALS = 'animals',
+  USERS = 'users',
+}
+
+export enum Operation {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+export enum Possession {
+  ANY = 'any',
+  OWN = 'own',
+}
 
 @ObjectType()
 @Entity()
@@ -26,17 +48,50 @@ export class Grant extends BaseEntity {
 
   @Field()
   @Column({
+    type: 'enum',
+    enum: Resource,
+    default: Resource.ANIMALS,
     nullable: false,
-    default: '',
   })
-  resource: string;
+  resource: Resource;
 
   @Field()
   @Column({
+    type: 'enum',
+    enum: Operation,
+    default: Operation.READ,
     nullable: false,
-    default: '',
   })
-  action: string;
+  operation: Operation;
+
+  @Field()
+  @Column({
+    type: 'enum',
+    enum: Possession,
+    default: Possession.ANY,
+    nullable: false,
+  })
+  possession: Possession;
+
+  // @Field()
+  // @Column({
+  //   generatedType: 'STORED',
+  //   asExpression: `operation || ':' || 'possession'`,
+  // })
+  // action: string;
+  // @Expose()
+  // public get action() {
+  //   return `${this.operation}:${this.possession}`;
+  // }
+  @IsOptional()
+  public action: string;
+
+  @AfterLoad()
+  @AfterInsert()
+  @AfterUpdate()
+  generateAction(): void {
+    this.action = `${this.operation}:${this.possession}`;
+  }
 
   @Field()
   @Column({

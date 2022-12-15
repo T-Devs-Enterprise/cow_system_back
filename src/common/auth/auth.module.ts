@@ -2,6 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { AnimalsModule } from 'src/animals/animals.module';
+import { GrantsModule } from 'src/grants/grants.module';
 import { RolesService } from 'src/roles/roles.service';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule } from '../config/config.module';

@@ -7,9 +7,20 @@ import {
 } from '../hooks/many-to-many.hook';
 import * as bcrypt from 'bcrypt';
 
+const hash = (password: string) => {
+  const saltOrRounds = 10;
+  return bcrypt.hash(password, saltOrRounds);
+};
+
 export const userResource: ResourceWithOptions = {
   resource: User,
 
+  // features: [
+  //   passwordsFeature({
+  //     properties: { encryptedPassword: 'password' },
+  //     hash: hash,
+  //   }),
+  // ],
   options: injectManyToManySupport(
     {
       actions: {
@@ -26,17 +37,18 @@ export const userResource: ResourceWithOptions = {
           },
         },
         edit: {
-          before: async (request) => {
-            // no need to hash on GET requests, we'll remove passwords there anyway
+          before: async (request, resource) => {
             if (request.method === 'post') {
-              // hash only if password is present, delete otherwise
-              // so we don't overwrite it
               if (request.payload?.password) {
-                const saltOrRounds = 10;
-                request.payload.password = await bcrypt.hash(
-                  request.payload.password,
-                  saltOrRounds,
-                );
+                if (
+                  resource.record.params.password != request.payload.password
+                ) {
+                  const saltOrRounds = 10;
+                  request.payload.password = await bcrypt.hash(
+                    request.payload.password,
+                    saltOrRounds,
+                  );
+                }
               } else {
                 delete request.payload?.password;
               }
@@ -56,6 +68,7 @@ export const userResource: ResourceWithOptions = {
           },
         },
       },
+
       // sort: { sortBy: 'id', direction: 'asc' },
     },
     [{ propertyName: 'roles', modelClassName: 'Role' }],

@@ -1,7 +1,12 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AccessControlModule, RolesBuilder } from 'nest-access-control';
+import { AnimalsModule } from 'src/animals/animals.module';
+import { AnimalsService } from 'src/animals/animals.service';
+import { Grant } from 'src/grants/entities/grant.entity';
 import { GrantsModule } from 'src/grants/grants.module';
 import { GrantsService } from 'src/grants/grants.service';
+import { User } from 'src/users/entities/user.entity';
+import { UsersModule } from 'src/users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
@@ -15,10 +20,6 @@ import { GraphqlModule } from './graphql/graphql.module';
     DatabaseModule,
     AuthModule,
     AdminModule,
-    // AccessControlModule.forRootAsync({ imports: [GrantsModule],
-    //   useFactory: async (grantsService: GrantsService) => new RolesBuilder(),
-    //   inject: [GrantsService],
-    // }),
   ],
   exports: [
     ConfigModule,
@@ -26,11 +27,6 @@ import { GraphqlModule } from './graphql/graphql.module';
     DatabaseModule,
     AuthModule,
     AdminModule,
-    // AccessControlModule.forRootAsync({
-    //   imports: [GrantsModule],
-    //   useFactory: async (grantsService: GrantsService) => new RolesBuilder(),
-    //   inject: [GrantsService],
-    // }),
   ],
 })
 export class CommonModule {}
